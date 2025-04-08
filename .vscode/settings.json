@@ -28,6 +28,8 @@
         "string_view": "c",
         "unordered_map": "c",
         "variant": "c",
-        "istream": "c"
+        "istream": "c",
+        "ctype.h": "c",
+        "limits.h": "c"
     }
 }
