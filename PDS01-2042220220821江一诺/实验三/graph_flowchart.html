@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图数据结构操作流程图</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            max-width: 1000px;
+            width: 95%;
+            overflow: auto;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+        .node rect {
+            stroke: #333;
+            fill: #fff;
+        }
+        .node text {
+            font-size: 14px;
+        }
+        .operation rect {
+            fill: #e1f5fe;
+            stroke: #0288d1;
+        }
+        .decision rect {
+            fill: #fff9c4;
+            stroke: #fbc02d;
+        }
+        .start-end rect {
+            fill: #e8f5e9;
+            stroke: #43a047;
+            rx: 20;
+            ry: 20;
+        }
+        .edge {
+            stroke: #333;
+            stroke-width: 1.5;
+            fill: none;
+        }
+        .edge-text {
+            fill: #555;
+            font-size: 12px;
+        }
+        .arrow {
+            fill: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>图数据结构操作流程图</h1>
+    <div class="container">
+        <svg width="960" height="2000" xmlns="http://www.w3.org/2000/svg">
+            <!-- 数据结构定义 -->
+            <g transform="translate(20,20)">
+                <rect x="0" y="0" width="920" height="200" rx="5" ry="5" fill="#f1f8e9" stroke="#558b2f" stroke-width="2"/>
+                <text x="460" y="30" text-anchor="middle" font-weight="bold" font-size="16">图的数据结构</text>
+                
+                <rect x="50" y="50" width="250" height="130" rx="5" ry="5" fill="#fff" stroke="#7cb342" stroke-width="1.5"/>
+                <text x="175" y="70" text-anchor="middle" font-weight="bold">顶点结构 (VertexNode)</text>
+                <text x="60" y="95">- 数据值 (data): int</text>
+                <text x="60" y="120">- 第一个邻接点指针 (first): ArcNode*</text>
+                
+                <rect x="350" y="50" width="250" height="130" rx="5" ry="5" fill="#fff" stroke="#7cb342" stroke-width="1.5"/>
+                <text x="475" y="70" text-anchor="middle" font-weight="bold">弧结构 (ArcNode)</text>
+                <text x="360" y="95">- 邻接点序号 (adjvex): int</text>
+                <text x="360" y="120">- 权重 (weight): int</text>
+                <text x="360" y="145">- 下一个邻接点指针 (next): ArcNode*</text>
+                
+                <rect x="650" y="50" width="250" height="130" rx="5" ry="5" fill="#fff" stroke="#7cb342" stroke-width="1.5"/>
+                <text x="775" y="70" text-anchor="middle" font-weight="bold">图结构 (Graph)</text>
+                <text x="660" y="95">- 顶点数组 (adjList): VertexNode[]</text>
+                <text x="660" y="120">- 顶点数量 (numVertices): int</text>
+                <text x="660" y="145">- 边数量 (numEdges): int</text>
+            </g>
+            
+            <!-- 初始化图 initGraph -->
+            <g transform="translate(20,250)">
+                <rect x="0" y="0" width="920" height="200" rx="5" ry="5" fill="#e8eaf6" stroke="#3949ab" stroke-width="2"/>
+                <text x="460" y="30" text-anchor="middle" font-weight="bold" font-size="16">初始化图 (initGraph)</text>
+                
+                <g class="start-end">
+                    <rect x="400" y="50" width="120" height="40" />
+                    <text x="460" y="75" text-anchor="middle">开始</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="110" width="220" height="40" />
+                    <text x="460" y="135" text-anchor="middle">设置顶点数和边数为0</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="170" width="220" height="40" />
+                    <text x="460" y="195" text-anchor="middle">将所有顶点初始化为空</text>
+                </g>
+                
+                <path class="edge" d="M460,90 L460,110" />
+                <polygon class="arrow" points="460,110 455,100 465,100" />
+                
+                <path class="edge" d="M460,150 L460,170" />
+                <polygon class="arrow" points="460,170 455,160 465,160" />
+            </g>
+            
+            <!-- 插入顶点 insertVertex -->
+            <g transform="translate(20,470)">
+                <rect x="0" y="0" width="920" height="330" rx="5" ry="5" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+                <text x="460" y="30" text-anchor="middle" font-weight="bold" font-size="16">插入顶点 (insertVertex)</text>
+                
+                <g class="start-end">
+                    <rect x="400" y="50" width="120" height="40" />
+                    <text x="460" y="75" text-anchor="middle">开始</text>
+                </g>
+                
+                <g class="decision">
+                    <rect x="370" y="110" width="180" height="40" />
+                    <text x="460" y="135" text-anchor="middle">顶点数量 >= MAX_VERTICES?</text>
+                </g>
+                
+                <g class="decision">
+                    <rect x="370" y="170" width="180" height="40" />
+                    <text x="460" y="195" text-anchor="middle">顶点是否已存在?</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="230" width="220" height="40" />
+                    <text x="460" y="255" text-anchor="middle">添加新顶点到数组末尾</text>
+                </g>
+                
+                <g class="start-end">
+                    <rect x="400" y="290" width="120" height="40" />
+                    <text x="460" y="315" text-anchor="middle">结束</text>
+                </g>
+                
+                <path class="edge" d="M460,90 L460,110" />
+                <polygon class="arrow" points="460,110 455,100 465,100" />
+                
+                <path class="edge" d="M460,150 L460,170" />
+                <polygon class="arrow" points="460,170 455,160 465,160" />
+                
+                <path class="edge" d="M460,210 L460,230" />
+                <polygon class="arrow" points="460,230 455,220 465,220" />
+                
+                <path class="edge" d="M460,270 L460,290" />
+                <polygon class="arrow" points="460,290 455,280 465,280" />
+                
+                <path class="edge" d="M550,130 L580,130 L580,310 L520,310" />
+                <polygon class="arrow" points="520,310 530,305 530,315" />
+                <text x="600" y="200" class="edge-text">是</text>
+                
+                <path class="edge" d="M550,190 L580,190 L580,310 L520,310" />
+                <polygon class="arrow" points="520,310 530,305 530,315" />
+                <text x="600" y="240" class="edge-text">是</text>
+                
+                <text x="460" y="160" class="edge-text">否</text>
+                <text x="460" y="220" class="edge-text">否</text>
+            </g>
+            
+            <!-- 插入边 insertEdge -->
+            <g transform="translate(20,820)">
+                <rect x="0" y="0" width="920" height="370" rx="5" ry="5" fill="#e0f7fa" stroke="#00acc1" stroke-width="2"/>
+                <text x="460" y="30" text-anchor="middle" font-weight="bold" font-size="16">插入边 (insertEdge)</text>
+                
+                <g class="start-end">
+                    <rect x="400" y="50" width="120" height="40" />
+                    <text x="460" y="75" text-anchor="middle">开始</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="110" width="220" height="40" />
+                    <text x="460" y="135" text-anchor="middle">查找起点和终点的索引</text>
+                </g>
+                
+                <g class="decision">
+                    <rect x="370" y="170" width="180" height="40" />
+                    <text x="460" y="195" text-anchor="middle">索引是否有效?</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="230" width="220" height="40" />
+                    <text x="460" y="255" text-anchor="middle">创建新的邻接点节点</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="290" width="220" height="40" />
+                    <text x="460" y="315" text-anchor="middle">插入到起点的邻接表头部</text>
+                </g>
+                
+                <g class="start-end">
+                    <rect x="400" y="350" width="120" height="40" />
+                    <text x="460" y="375" text-anchor="middle">结束</text>
+                </g>
+                
+                <path class="edge" d="M460,90 L460,110" />
+                <polygon class="arrow" points="460,110 455,100 465,100" />
+                
+                <path class="edge" d="M460,150 L460,170" />
+                <polygon class="arrow" points="460,170 455,160 465,160" />
+                
+                <path class="edge" d="M460,210 L460,230" />
+                <polygon class="arrow" points="460,230 455,220 465,220" />
+                
+                <path class="edge" d="M460,270 L460,290" />
+                <polygon class="arrow" points="460,290 455,280 465,280" />
+                
+                <path class="edge" d="M460,330 L460,350" />
+                <polygon class="arrow" points="460,350 455,340 465,340" />
+                
+                <path class="edge" d="M550,190 L580,190 L580,370 L520,370" />
+                <polygon class="arrow" points="520,370 530,365 530,375" />
+                <text x="600" y="280" class="edge-text">否</text>
+                
+                <text x="460" y="220" class="edge-text">是</text>
+            </g>
+            
+            <!-- 深度优先搜索 DFS -->
+            <g transform="translate(20,1210)">
+                <rect x="0" y="0" width="920" height="370" rx="5" ry="5" fill="#f3e5f5" stroke="#8e24aa" stroke-width="2"/>
+                <text x="460" y="30" text-anchor="middle" font-weight="bold" font-size="16">深度优先搜索 (DFS)</text>
+                
+                <g class="start-end">
+                    <rect x="400" y="50" width="120" height="40" />
+                    <text x="460" y="75" text-anchor="middle">开始</text>
+                </g>
+                
+                <g class="decision">
+                    <rect x="370" y="110" width="180" height="40" />
+                    <text x="460" y="135" text-anchor="middle">顶点索引是否有效?</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="170" width="220" height="40" />
+                    <text x="460" y="195" text-anchor="middle">输出当前顶点的值</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="230" width="220" height="40" />
+                    <text x="460" y="255" text-anchor="middle">标记当前顶点为已访问</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="290" width="220" height="40" />
+                    <text x="460" y="307" text-anchor="middle">遍历当前顶点的所有邻接点,</text>
+                    <text x="460" y="327" text-anchor="middle">对未访问的邻接点递归调用DFS</text>
+                </g>
+                
+                <g class="start-end">
+                    <rect x="400" y="350" width="120" height="40" />
+                    <text x="460" y="375" text-anchor="middle">结束</text>
+                </g>
+                
+                <path class="edge" d="M460,90 L460,110" />
+                <polygon class="arrow" points="460,110 455,100 465,100" />
+                
+                <path class="edge" d="M460,150 L460,170" />
+                <polygon class="arrow" points="460,170 455,160 465,160" />
+                
+                <path class="edge" d="M460,210 L460,230" />
+                <polygon class="arrow" points="460,230 455,220 465,220" />
+                
+                <path class="edge" d="M460,270 L460,290" />
+                <polygon class="arrow" points="460,290 455,280 465,280" />
+                
+                <path class="edge" d="M460,330 L460,350" />
+                <polygon class="arrow" points="460,350 455,340 465,340" />
+                
+                <path class="edge" d="M550,130 L580,130 L580,370 L520,370" />
+                <polygon class="arrow" points="520,370 530,365 530,375" />
+                <text x="600" y="240" class="edge-text">否</text>
+                
+                <text x="460" y="160" class="edge-text">是</text>
+            </g>
+            
+            <!-- 广度优先搜索 BFS -->
+            <g transform="translate(20,1600)">
+                <rect x="0" y="0" width="920" height="370" rx="5" ry="5" fill="#ede7f6" stroke="#5e35b1" stroke-width="2"/>
+                <text x="460" y="30" text-anchor="middle" font-weight="bold" font-size="16">广度优先搜索 (BFS)</text>
+                
+                <g class="start-end">
+                    <rect x="400" y="50" width="120" height="40" />
+                    <text x="460" y="75" text-anchor="middle">开始</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="110" width="220" height="40" />
+                    <text x="460" y="135" text-anchor="middle">初始化队列和访问标记数组</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="170" width="220" height="40" />
+                    <text x="460" y="187" text-anchor="middle">输出起始顶点并标记为已访问</text>
+                    <text x="460" y="207" text-anchor="middle">将起始顶点入队</text>
+                </g>
+                
+                <g class="decision">
+                    <rect x="370" y="230" width="180" height="40" />
+                    <text x="460" y="255" text-anchor="middle">队列是否为空?</text>
+                </g>
+                
+                <g class="operation">
+                    <rect x="350" y="290" width="220" height="40" />
+                    <text x="460" y="307" text-anchor="middle">出队一个顶点,遍历其所有</text>
+                    <text x="460" y="327" text-anchor="middle">未访问邻接点并标记入队</text>
+                </g>
+                
+                <g class="start-end">
+                    <rect x="400" y="350" width="120" height="40" />
+                    <text x="460" y="375" text-anchor="middle">结束</text>
+                </g>
+                
+                <path class="edge" d="M460,90 L460,110" />
+                <polygon class="arrow" points="460,110 455,100 465,100" />
+                
+                <path class="edge" d="M460,150 L460,170" />
+                <polygon class="arrow" points="460,170 455,160 465,160" />
+                
+                <path class="edge" d="M460,210 L460,230" />
+                <polygon class="arrow" points="460,230 455,220 465,220" />
+                
+                <path class="edge" d="M460,270 L460,290" />
+                <polygon class="arrow" points="460,290 455,280 465,280" />
+                
+                <path class="edge" d="M460,330 L460,230" marker-end="url(#arrowhead)" />
+                <polygon class="arrow" points="460,230 455,240 465,240" />
+                
+                <path class="edge" d="M550,250 L580,250 L580,370 L520,370" />
+                <polygon class="arrow" points="520,370 530,365 530,375" />
+                <text x="600" y="310" class="edge-text">是</text>
+                
+                <text x="440" y="280" class="edge-text">否</text>
+                <text x="420" y="310" class="edge-text">循环</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html> 

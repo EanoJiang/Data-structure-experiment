@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>哈夫曼解码流程图</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <svg width="800" height="900" xmlns="http://www.w3.org/2000/svg">
+        <!-- 样式定义 -->
+        <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+            </marker>
+        </defs>
+        <style>
+            .process { fill: #e6f7ff; stroke: #1890ff; stroke-width: 2; rx: 10; ry: 10; }
+            .decision { fill: #f6ffed; stroke: #52c41a; stroke-width: 2; }
+            .io { fill: #fff7e6; stroke: #fa8c16; stroke-width: 2; rx: 10; ry: 10; }
+            .arrow { stroke: #333; stroke-width: 1.5; marker-end: url(#arrowhead); }
+            .text { font-family: Arial, sans-serif; font-size: 14px; fill: #333; text-anchor: middle; }
+            .note { font-family: Arial, sans-serif; font-size: 12px; fill: #666; }
+            .boundary { stroke: #f5222d; stroke-width: 1; stroke-dasharray: 5,5; fill: none; }
+            .boundary-text { font-family: Arial, sans-serif; font-size: 12px; fill: #f5222d; }
+        </style>
+
+        <!-- 开始 -->
+        <rect x="350" y="30" width="120" height="50" class="process"/>
+        <text x="410" y="60" class="text">开始</text>
+
+        <!-- 初始化变量 -->
+        <rect x="250" y="120" width="320" height="80" class="process"/>
+        <text x="410" y="145" class="text">初始化变量</text>
+        <text x="410" y="165" class="text">root = 2*leafCount-2 (根节点索引)</text>
+        <text x="410" y="185" class="text">current = root, length = 0</text>
+
+        <!-- 循环开始 -->
+        <rect x="250" y="240" width="320" height="50" class="process"/>
+        <text x="410" y="270" class="text">循环 while (*encodedStr) (遍历编码字符串)</text>
+
+        <!-- 判断0或1 -->
+        <polygon points="410,330 480,380 410,430 340,380" class="decision"/>
+        <text x="410" y="380" class="text">当前字符是0还是1?</text>
+
+        <!-- 左子节点 -->
+        <rect x="200" y="470" width="180" height="50" class="process"/>
+        <text x="290" y="500" class="text">current = nodes[current].lchild</text>
+
+        <!-- 右子节点 -->
+        <rect x="440" y="470" width="180" height="50" class="process"/>
+        <text x="530" y="500" class="text">current = nodes[current].rchild</text>
+
+        <!-- 判断是否为叶子节点 -->
+        <polygon points="410,560 480,610 410,660 340,610" class="decision"/>
+        <text x="410" y="595" class="text">是否为叶子节点?</text>
+        <text x="410" y="615" class="text">(lchild==-1 && rchild==-1)</text>
+
+        <!-- 记录解码结果 -->
+        <rect x="200" y="700" width="180" height="70" class="process"/>
+        <text x="290" y="725" class="text">记录解码结果</text>
+        <text x="290" y="745" class="text">signal[length++] = nodes[current].data</text>
+        <text x="290" y="765" class="text">current = root</text>
+
+        <!-- 移动到下一个字符 -->
+        <rect x="440" y="710" width="180" height="50" class="process"/>
+        <text x="530" y="740" class="text">encodedStr++</text>
+
+        <!-- 结束 -->
+        <rect x="350" y="820" width="120" height="50" class="process"/>
+        <text x="410" y="850" class="text">结束</text>
+
+        <!-- 连接箭头 -->
+        <line x1="410" y1="80" x2="410" y2="120" class="arrow"/>
+        <line x1="410" y1="200" x2="410" y2="240" class="arrow"/>
+        <line x1="410" y1="290" x2="410" y2="330" class="arrow"/>
+        
+        <!-- 0/1判断箭头 -->
+        <line x1="340" y1="380" x2="290" y2="470" class="arrow"/>
+        <text x="300" y="430" class="note">0</text>
+        <line x1="480" y1="380" x2="530" y2="470" class="arrow"/>
+        <text x="520" y="430" class="note">1</text>
+        
+        <!-- 合并路径 -->
+        <line x1="290" y1="520" x2="290" y2="560" class="arrow"/>
+        <line x1="530" y1="520" x2="530" y2="560" class="arrow"/>
+        <path d="M 290,540 H 410" class="arrow" fill="none" marker-end="none"/>
+        <path d="M 530,540 H 410" class="arrow" fill="none" marker-end="none"/>
+        
+        <!-- 叶子节点判断箭头 -->
+        <line x1="340" y1="610" x2="290" y2="700" class="arrow"/>
+        <text x="300" y="660" class="note">是</text>
+        <line x1="480" y1="610" x2="530" y2="710" class="arrow"/>
+        <text x="520" y="660" class="note">否</text>
+        
+        <!-- 循环回箭头 -->
+        <line x1="290" y1="770" x2="290" y2="800" class="arrow"/>
+        <line x1="530" y1="760" x2="530" y2="800" class="arrow"/>
+        <path d="M 290,800 H 410" class="arrow" fill="none" marker-end="none"/>
+        <path d="M 530,800 H 410" class="arrow" fill="none" marker-end="none"/>
+        <path d="M 410,800 V 780" class="arrow" fill="none"/>
+        
+        <!-- 循环回到开始 -->
+        <path d="M 410,780 H 150 V 270 H 250" class="arrow" fill="none"/>
+        <text x="180" y="500" class="note">继续处理下一个字符</text>
+        
+        <!-- 结束箭头 -->
+        <line x1="410" y1="780" x2="410" y2="820" class="arrow"/>
+        
+        <!-- 边界条件 -->
+        <rect x="580" y="300" width="180" height="320" class="boundary" rx="10" ry="10"/>
+        <text x="600" y="330" class="boundary-text">边界条件:</text>
+        <text x="600" y="360" class="boundary-text">1. 编码字符串必须只包含0和1</text>
+        <text x="600" y="390" class="boundary-text">2. 编码字符串必须是有效的</text>
+        <text x="600" y="410" class="boundary-text">   哈夫曼编码</text>
+        <text x="600" y="440" class="boundary-text">3. 哈夫曼树已正确构建</text>
+        <text x="600" y="470" class="boundary-text">4. signal数组空间足够</text>
+        <text x="600" y="500" class="boundary-text">5. 根节点索引计算正确</text>
+        <text x="600" y="530" class="boundary-text">6. 叶子节点的lchild和</text>
+        <text x="600" y="550" class="boundary-text">   rchild均为-1</text>
+        <text x="600" y="580" class="boundary-text">7. 编码字符串以'\0'结尾</text>
+    </svg>
+</body>
+</html>

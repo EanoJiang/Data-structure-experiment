@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BFS流程图</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>广度优先搜索(BFS)流程图</h1>
+        <svg width="800" height="700" xmlns="http://www.w3.org/2000/svg">
+            <!-- 背景 -->
+            <rect width="800" height="700" fill="#f9f9f9" rx="10" ry="10"/>
+            
+            <!-- 节点 -->
+            <rect x="350" y="50" width="120" height="60" rx="10" ry="10" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+            <text x="410" y="85" text-anchor="middle" fill="white" font-weight="bold">开始</text>
+            
+            <!-- 边界检查 -->
+            <rect x="350" y="150" width="120" height="60" rx="10" ry="10" fill="#FFC107" stroke="#333" stroke-width="2"/>
+            <text x="410" y="175" text-anchor="middle" fill="#333" font-weight="bold">边界检查</text>
+            <text x="410" y="195" text-anchor="middle" fill="#333" font-size="12">start是否合法?</text>
+            
+            <!-- 初始化 -->
+            <rect x="350" y="250" width="120" height="60" rx="10" ry="10" fill="#2196F3" stroke="#333" stroke-width="2"/>
+            <text x="410" y="275" text-anchor="middle" fill="white" font-weight="bold">初始化</text>
+            <text x="410" y="295" text-anchor="middle" fill="white" font-size="12">队列、visited数组</text>
+            
+            <!-- 访问起始节点 -->
+            <rect x="350" y="350" width="120" height="60" rx="10" ry="10" fill="#9C27B0" stroke="#333" stroke-width="2"/>
+            <text x="410" y="375" text-anchor="middle" fill="white" font-weight="bold">访问起始节点</text>
+            <text x="410" y="395" text-anchor="middle" fill="white" font-size="12">打印并入队</text>
+            
+            <!-- 队列判断 -->
+            <rect x="350" y="450" width="120" height="60" rx="10" ry="10" fill="#FFC107" stroke="#333" stroke-width="2"/>
+            <text x="410" y="475" text-anchor="middle" fill="#333" font-weight="bold">队列判断</text>
+            <text x="410" y="495" text-anchor="middle" fill="#333" font-size="12">队列是否为空?</text>
+            
+            <!-- 出队 -->
+            <rect x="550" y="450" width="120" height="60" rx="10" ry="10" fill="#2196F3" stroke="#333" stroke-width="2"/>
+            <text x="610" y="475" text-anchor="middle" fill="white" font-weight="bold">出队</text>
+            <text x="610" y="495" text-anchor="middle" fill="white" font-size="12">取队首顶点v</text>
+            
+            <!-- 遍历邻接点 -->
+            <rect x="550" y="550" width="120" height="60" rx="10" ry="10" fill="#9C27B0" stroke="#333" stroke-width="2"/>
+            <text x="610" y="575" text-anchor="middle" fill="white" font-weight="bold">遍历邻接点</text>
+            <text x="610" y="595" text-anchor="middle" fill="white" font-size="12">for循环</text>
+            
+            <!-- 邻接点检查 -->
+            <rect x="550" y="650" width="120" height="60" rx="10" ry="10" fill="#FFC107" stroke="#333" stroke-width="2"/>
+            <text x="610" y="675" text-anchor="middle" fill="#333" font-weight="bold">邻接点检查</text>
+            <text x="610" y="695" text-anchor="middle" fill="#333" font-size="12">是否已访问?</text>
+            
+            <!-- 处理邻接点 -->
+            <rect x="350" y="650" width="120" height="60" rx="10" ry="10" fill="#2196F3" stroke="#333" stroke-width="2"/>
+            <text x="410" y="675" text-anchor="middle" fill="white" font-weight="bold">处理邻接点</text>
+            <text x="410" y="695" text-anchor="middle" fill="white" font-size="12">打印并入队</text>
+            
+            <!-- 结束 -->
+            <rect x="150" y="450" width="120" height="60" rx="10" ry="10" fill="#F44336" stroke="#333" stroke-width="2"/>
+            <text x="210" y="485" text-anchor="middle" fill="white" font-weight="bold">返回</text>
+            
+            <!-- 边界条件标注 -->
+            <rect x="50" y="150" width="200" height="80" rx="5" ry="5" fill="#FFECB3" stroke="#FFA000" stroke-width="2" stroke-dasharray="5,5"/>
+            <text x="150" y="180" text-anchor="middle" fill="#333" font-weight="bold">边界条件1:</text>
+            <text x="150" y="200" text-anchor="middle" fill="#333" font-size="12">start < 0 || start >= G->numVertices</text>
+            <text x="150" y="220" text-anchor="middle" fill="#333" font-size="12">非法顶点索引，直接返回</text>
+            
+            <rect x="50" y="630" width="200" height="80" rx="5" ry="5" fill="#FFECB3" stroke="#FFA000" stroke-width="2" stroke-dasharray="5,5"/>
+            <text x="150" y="650" text-anchor="middle" fill="#333" font-weight="bold">边界条件2:</text>
+            <text x="150" y="670" text-anchor="middle" fill="#333" font-size="12">visited[p->adjvex] == 1</text>
+            <text x="150" y="690" text-anchor="middle" fill="#333" font-size="12">顶点已访问，跳过</text>
+            
+            <!-- 连接线 -->
+            <line x1="410" y1="110" x2="410" y2="150" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <line x1="410" y1="210" x2="410" y2="250" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <line x1="410" y1="310" x2="410" y2="350" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <line x1="410" y1="410" x2="410" y2="450" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <line x1="470" y1="480" x2="550" y2="480" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="510" y="470" text-anchor="middle" fill="#333" font-size="12">非空</text>
+            <line x1="350" y1="480" x2="270" y2="480" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="310" y="470" text-anchor="middle" fill="#333" font-size="12">为空</text>
+            <line x1="610" y1="510" x2="610" y2="550" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <line x1="610" y1="610" x2="610" y2="650" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <line x1="550" y1="680" x2="470" y2="680" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="510" y="670" text-anchor="middle" fill="#333" font-size="12">未访问</text>
+            
+            <!-- 循环返回 -->
+            <path d="M 410 710 C 410 730, 700 730, 700 580, 700 530, 670 480, 670 480" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+            <path d="M 610 710 C 610 730, 700 730, 700 580, 700 530, 670 480, 670 480" stroke="#333" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
+            <text x="700" y="600" text-anchor="middle" fill="#333" font-size="12">继续处理队列</text>
+            
+            <!-- 边界条件箭头 -->
+            <line x1="350" y1="180" x2="250" y2="180" stroke="#FFA000" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+            <line x1="550" y1="680" x2="250" y2="680" stroke="#FFA000" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+            
+            <!-- 箭头定义 -->
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+</body>
+</html>

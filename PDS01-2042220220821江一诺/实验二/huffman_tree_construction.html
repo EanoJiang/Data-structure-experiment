@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>哈夫曼码书构建流程图</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <svg width="800" height="900" xmlns="http://www.w3.org/2000/svg">
+        <!-- 样式定义 -->
+        <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+            </marker>
+        </defs>
+        <style>
+            .process { fill: #e6f7ff; stroke: #1890ff; stroke-width: 2; rx: 10; ry: 10; }
+            .decision { fill: #f6ffed; stroke: #52c41a; stroke-width: 2; }
+            .io { fill: #fff7e6; stroke: #fa8c16; stroke-width: 2; rx: 10; ry: 10; }
+            .arrow { stroke: #333; stroke-width: 1.5; marker-end: url(#arrowhead); }
+            .text { font-family: Arial, sans-serif; font-size: 14px; fill: #333; text-anchor: middle; }
+            .note { font-family: Arial, sans-serif; font-size: 12px; fill: #666; }
+            .boundary { stroke: #f5222d; stroke-width: 1; stroke-dasharray: 5,5; fill: none; }
+            .boundary-text { font-family: Arial, sans-serif; font-size: 12px; fill: #f5222d; }
+        </style>
+
+        <!-- 开始 -->
+        <rect x="350" y="30" width="120" height="50" class="process"/>
+        <text x="410" y="60" class="text">开始</text>
+
+        <!-- 初始化哈夫曼树节点 -->
+        <rect x="300" y="120" width="220" height="50" class="process"/>
+        <text x="410" y="150" class="text">调用initHuffmanTree初始化节点</text>
+        <text x="410" y="170" class="note">设置非叶子节点的parent/lchild/rchild为-1</text>
+
+        <!-- 计算总节点数 -->
+        <rect x="300" y="210" width="220" height="50" class="process"/>
+        <text x="410" y="240" class="text">计算总节点数 = 2*leafCount-1</text>
+
+        <!-- 循环开始 -->
+        <rect x="300" y="300" width="220" height="50" class="process"/>
+        <text x="410" y="330" class="text">循环 i = leafCount 到 totalNodes-1</text>
+
+        <!-- 选择两个权重最小节点 -->
+        <rect x="300" y="390" width="220" height="50" class="process"/>
+        <text x="410" y="420" class="text">调用select函数选择两个权重最小节点</text>
+
+        <!-- 构建父节点 -->
+        <rect x="300" y="480" width="220" height="70" class="process"/>
+        <text x="410" y="510" class="text">设置s1和s2的父节点为i</text>
+        <text x="410" y="530" class="text">设置节点i的左右子节点为s1和s2</text>
+
+        <!-- 计算新节点权重 -->
+        <rect x="300" y="590" width="220" height="50" class="process"/>
+        <text x="410" y="620" class="text">计算新节点权重 = s1权重 + s2权重</text>
+
+        <!-- 循环判断 -->
+        <polygon points="410,680 460,730 410,780 360,730" class="decision"/>
+        <text x="410" y="730" class="text">循环是否结束?</text>
+
+        <!-- 结束 -->
+        <rect x="350" y="820" width="120" height="50" class="process"/>
+        <text x="410" y="850" class="text">结束</text>
+
+        <!-- 连接箭头 -->
+        <line x1="410" y1="80" x2="410" y2="120" class="arrow"/>
+        <line x1="410" y1="170" x2="410" y2="210" class="arrow"/>
+        <line x1="410" y1="260" x2="410" y2="300" class="arrow"/>
+        <line x1="410" y1="350" x2="410" y2="390" class="arrow"/>
+        <line x1="410" y1="440" x2="410" y2="480" class="arrow"/>
+        <line x1="410" y1="550" x2="410" y2="590" class="arrow"/>
+        <line x1="410" y1="640" x2="410" y2="680" class="arrow"/>
+        <line x1="410" y1="780" x2="410" y2="820" class="arrow"/>
+
+        <!-- 循环箭头 -->
+        <path d="M 360,730 H 250 V 350 H 300" class="arrow" fill="none"/>
+        <text x="270" y="550" class="note">否，继续循环</text>
+
+        <!-- 结束箭头 -->
+        <text x="460" y="750" class="note">是，循环结束</text>
+
+        <!-- 边界条件 -->
+        <rect x="50" y="350" width="180" height="350" class="boundary" rx="10" ry="10"/>
+        <text x="140" y="380" class="boundary-text">边界条件:</text>
+        <text x="140" y="410" class="boundary-text">1. leafCount > 0</text>
+        <text x="140" y="440" class="boundary-text">2. totalNodes ≤ MAX_NODES</text>
+        <text x="140" y="470" class="boundary-text">3. select函数确保s1和s2不相同</text>
+        <text x="140" y="500" class="boundary-text">4. 所有节点的parent初始值为-1</text>
+        <text x="140" y="530" class="boundary-text">5. 叶子节点索引: 0 ~ leafCount-1</text>
+        <text x="140" y="560" class="boundary-text">6. 非叶节点索引: leafCount ~ totalNodes-1</text>
+    </svg>
+</body>
+</html>
