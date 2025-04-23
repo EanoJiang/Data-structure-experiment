@@ -31,5 +31,6 @@
         "istream": "c",
         "ctype.h": "c",
         "limits.h": "c"
-    }
+    },
+    "C_Cpp.default.compilerPath": ""
 }
