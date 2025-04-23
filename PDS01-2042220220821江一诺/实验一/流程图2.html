@@ -1,0 +1,63 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- 样式 -->
+  <style>
+    .box { fill: #f0f8ff; stroke: #4682b4; stroke-width: 2; }
+    .decision { fill: #ffe4e1; stroke: #d2691e; stroke-width: 2; }
+    .process { fill: #e6fffa; stroke: #20b2aa; stroke-width: 2; }
+    .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    .text { font-family: Arial; font-size: 14px; fill: #333; }
+    .comment { font-family: Arial; font-size: 12px; fill: #777; font-style: italic; }
+    .highlight { fill: #ffff99; stroke: #ff9900; stroke-width: 2; }
+  </style>
+
+  <!-- 箭头标记 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+    </marker>
+  </defs>
+
+  <!-- 流程图 -->
+  <rect x="300" y="20" width="200" height="50" rx="10" class="box" />
+  <text x="400" y="45" text-anchor="middle" class="text">开始 smooth()</text>
+
+  <!-- 检查边界条件 -->
+  <path d="M400 70 L400 100" class="arrow" />
+  <rect x="250" y="100" width="300" height="60" rx="10" class="decision" />
+  <text x="400" y="125" text-anchor="middle" class="text">if(list->size < 3)</text>
+  <text x="400" y="145" text-anchor="middle" class="text">边界条件：至少需要3个节点</text>
+
+  <!-- 边界条件分支 -->
+  <path d="M400 160 L400 190" class="arrow" />
+  <path d="M550 130 L650 130 L650 500 L400 500 L400 480" class="arrow" />
+  <text x="605" y="125" text-anchor="middle" class="text">是</text>
+  <text x="400" y="180" text-anchor="middle" class="text">否</text>
+
+  <!-- 初始化 -->
+  <rect x="225" y="190" width="350" height="60" rx="10" class="process" />
+  <text x="400" y="215" text-anchor="middle" class="text">current = list->dummyHead->next->next</text>
+  <text x="400" y="235" text-anchor="middle" class="text">边界条件：从第二个节点开始(i=1)</text>
+
+  <!-- 循环 -->
+  <path d="M400 250 L400 280" class="arrow" />
+  <rect x="250" y="280" width="300" height="60" rx="10" class="decision" />
+  <text x="400" y="305" text-anchor="middle" class="text">for(i=1; i<list->size-1; i++)</text>
+  <text x="400" y="325" text-anchor="middle" class="text">边界条件：跳过第一个和最后一个节点</text>
+
+  <!-- 循环内部 -->
+  <path d="M400 340 L400 370" class="arrow" />
+  <rect x="200" y="370" width="400" height="80" rx="10" class="process" />
+  <text x="400" y="395" text-anchor="middle" class="text">获取前后节点: prev = current->prev; next = current->next</text>
+  <text x="400" y="415" text-anchor="middle" class="text">三维坐标求平均: current->x = (prev->x + current->x + next->x)/3</text>
+  <text x="400" y="435" text-anchor="middle" class="text">(对y,z坐标执行相同操作)</text>
+
+  <!-- 更新循环变量 -->
+  <path d="M200 410 L150 410 L150 310 L250 310" class="arrow" />
+  <text x="170" y="305" text-anchor="middle" class="text">继续循环</text>
+  <text x="170" y="410" text-anchor="middle" class="text">current = current->next</text>
+
+  <!-- 结束 -->
+  <path d="M400 450 L400 480" class="arrow" />
+  <rect x="300" y="480" width="200" height="50" rx="10" class="box" />
+  <text x="400" y="510" text-anchor="middle" class="text">结束 smooth()</text>
+</svg>
