@@ -1,0 +1,76 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- 样式 -->
+  <style>
+    .box { fill: #f0f8ff; stroke: #4682b4; stroke-width: 2; }
+    .decision { fill: #ffe4e1; stroke: #d2691e; stroke-width: 2; }
+    .process { fill: #e6fffa; stroke: #20b2aa; stroke-width: 2; }
+    .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    .text { font-family: Arial; font-size: 14px; fill: #333; }
+    .comment { font-family: Arial; font-size: 12px; fill: #777; font-style: italic; }
+    .highlight { fill: #ffff99; stroke: #ff9900; stroke-width: 2; }
+  </style>
+
+  <!-- 箭头标记 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+    </marker>
+  </defs>
+
+  <!-- 流程图 -->
+  <rect x="300" y="20" width="200" height="50" rx="10" class="box" />
+  <text x="400" y="45" text-anchor="middle" class="text">开始 downsample()</text>
+
+  <!-- 初始化 -->
+  <path d="M400 70 L400 100" class="arrow" />
+  <rect x="200" y="100" width="400" height="70" rx="10" class="process" />
+  <text x="400" y="125" text-anchor="middle" class="text">初始化计数器: count = 0</text>
+  <text x="400" y="145" text-anchor="middle" class="text">current = list->dummyHead->next</text>
+  <text x="400" y="165" text-anchor="middle" class="text">边界条件：从第一个有效节点开始</text>
+
+  <!-- 循环条件 -->
+  <path d="M400 170 L400 200" class="arrow" />
+  <rect x="250" y="200" width="300" height="50" rx="10" class="decision" />
+  <text x="400" y="230" text-anchor="middle" class="text">current != list->dummyTail</text>
+
+  <!-- 循环终止分支 -->
+  <path d="M550 225 L650 225 L650 500 L400 500 L400 480" class="arrow" />
+  <text x="570" y="220" text-anchor="middle" class="text">否</text>
+
+  <!-- 循环体 -->
+  <path d="M400 250 L400 280" class="arrow" />
+  <text x="400" y="270" text-anchor="middle" class="text">是</text>
+  <rect x="200" y="280" width="400" height="50" rx="10" class="process" />
+  <text x="400" y="310" text-anchor="middle" class="text">获取下一个节点: next = current->next</text>
+
+  <!-- 判断奇偶位置 -->
+  <path d="M400 330 L400 360" class="arrow" />
+  <rect x="250" y="360" width="300" height="50" rx="10" class="decision" />
+  <text x="400" y="390" text-anchor="middle" class="text">if(count % 2 == 1) // 奇数位置</text>
+
+  <!-- 删除节点 -->
+  <path d="M400 410 L400 440" class="arrow" />
+  <text x="380" y="430" text-anchor="middle" class="text">是</text>
+  <rect x="150" y="440" width="500" height="80" rx="10" class="process highlight" />
+  <text x="400" y="465" text-anchor="middle" class="text">current->prev->next = current->next</text>
+  <text x="400" y="485" text-anchor="middle" class="text">current->next->prev = current->prev</text>
+  <text x="400" y="505" text-anchor="middle" class="text">free(current); list->size--</text>
+
+  <!-- 不删除节点的分支 -->
+  <path d="M550 385 L600 385 L600 545" class="arrow" />
+  <text x="570" y="380" text-anchor="middle" class="text">否</text>
+
+  <!-- 更新计数器和指针 -->
+  <path d="M400 520 L400 550" class="arrow" />
+  <path d="M600 545 L400 545 L400 550" class="arrow" />
+  <rect x="250" y="550" width="300" height="50" rx="10" class="process" />
+  <text x="400" y="575" text-anchor="middle" class="text">count++; current = next</text>
+
+  <!-- 循环返回 -->
+  <path d="M250 575 L150 575 L150 225 L250 225" class="arrow" />
+
+  <!-- 结束 -->
+  <rect x="300" y="630" width="200" height="50" rx="10" class="box" />
+  <text x="400" y="660" text-anchor="middle" class="text">结束 downsample()</text>
+  <path d="M400 600 L400 630" class="arrow" />
+</svg>
