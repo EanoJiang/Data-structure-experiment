@@ -5,7 +5,6 @@
 
 // 定义信号元素结构体
 typedef struct {
-    double value;     // 信号值
     double distance;  // 计算的距离
 } SignalElement;
 
@@ -19,7 +18,7 @@ int readDistancesFromFile(const char* filename, double** values) {
     
     // 先统计文件中的数据行数
     int count = 0;
-    char line[100];
+    char line[5000];
     double temp;
     
     while (fgets(line, sizeof(line), file) != NULL) {
@@ -65,7 +64,7 @@ void insertionSort(SignalElement* array, int size) {
     for (i = 1; i < size; i++) {
         key = array[i];
         j = i - 1;
-        
+        //边界条件，如果当前元素比前一个元素小，则直接插入，否则把当前元素向后移动一位
         while (j >= 0 && array[j].distance > key.distance) {
             array[j + 1] = array[j];
             j = j - 1;
@@ -82,6 +81,7 @@ void shellSort(SignalElement* array, int size) {
         for (int i = gap; i < size; i++) {
             SignalElement temp = array[i];
             int j;
+            
             for (j = i; j >= gap && array[j - gap].distance > temp.distance; j -= gap) {
                 array[j] = array[j - gap];
             }
@@ -113,6 +113,7 @@ int partition(SignalElement* array, int low, int high) {
 }
 
 void quickSortRecursive(SignalElement* array, int low, int high) {
+    // 递归终止条件：起始索引<结束索引
     if (low < high) {
         int pi = partition(array, low, high);
         quickSortRecursive(array, low, pi - 1);
@@ -147,25 +148,11 @@ void selectionSort(SignalElement* array, int size) {
 // 打印信号元素数组
 void printArray(SignalElement* array, int size) {
     for (int i = 0; i < size; i++) {
-        printf("值: %.2f, 距离: %.2f\n", array[i].value, array[i].distance);
+        printf("距离: %.6f\n", array[i].distance);
     }
     printf("\n");
 }
 
-// 生成大量随机数据用于性能测试
-void generateRandomData(SignalElement** array, int size) {
-    *array = (SignalElement*)malloc(size * sizeof(SignalElement));
-    if (*array == NULL) {
-        printf("内存分配失败\n");
-        exit(1);
-    }
-    
-    for (int i = 0; i < size; i++) {
-        double randomValue = ((double)rand() / RAND_MAX) * 100.0;  // 0 到 100.0 之间的随机值
-        (*array)[i].value = randomValue;    // 值和距离相同
-        (*array)[i].distance = randomValue; // 值和距离相同
-    }
-}
 
 // 复制数组
 void copyArray(SignalElement* dest, SignalElement* src, int size) {
@@ -185,69 +172,98 @@ void testSortingPerformance() {
     fprintf(outputFile, "排序算法性能测试报告\n");
     fprintf(outputFile, "==========================\n\n");
     
-    // 不同大小的测试数据
-    int testSizes[] = {100, 1000, 10000, 50000};
-    int numTests = sizeof(testSizes) / sizeof(testSizes[0]);
+    // 完整文件路径
+    const char* filepath = "./计算得出的距离.txt";
     
-    fprintf(outputFile, "| 数据量 | 希尔排序 (ms) | 快速排序 (ms) | 选择排序 (ms) |\n");
-    fprintf(outputFile, "|--------|--------------|--------------|---------------|\n");
+    // 读取实际数据
+    double* distanceValues;
+    int size = readDistancesFromFile(filepath, &distanceValues);
     
-    for (int t = 0; t < numTests; t++) {
-        int size = testSizes[t];
+    if (size <= 0) {
+        printf("性能测试读取数据失败或数据为空，尝试使用绝对路径\n");
+        filepath = "/Users/User/Desktop/Data structure experiment/PDS01-2042220220821江一诺/实验四/计算得出的距离.txt";
+        size = readDistancesFromFile(filepath, &distanceValues);
         
-        // 生成随机数据
-        SignalElement* originalArray = NULL;
-        generateRandomData(&originalArray, size);
-        
-        // 为每种排序算法创建副本
-        SignalElement* shellArray = (SignalElement*)malloc(size * sizeof(SignalElement));
-        SignalElement* quickArray = (SignalElement*)malloc(size * sizeof(SignalElement));
-        SignalElement* selectArray = (SignalElement*)malloc(size * sizeof(SignalElement));
-        
-        if (shellArray == NULL || quickArray == NULL || selectArray == NULL) {
-            printf("内存分配失败\n");
-            free(originalArray);
-            if (shellArray) free(shellArray);
-            if (quickArray) free(quickArray);
-            if (selectArray) free(selectArray);
+        if (size <= 0) {
+            printf("性能测试使用绝对路径仍然失败\n");
+            fprintf(outputFile, "无法读取数据文件\n");
             fclose(outputFile);
             return;
         }
-        
-        copyArray(shellArray, originalArray, size);
-        copyArray(quickArray, originalArray, size);
-        copyArray(selectArray, originalArray, size);
-        
-        // 测试希尔排序
-        clock_t start = clock();
-        shellSort(shellArray, size);
-        clock_t end = clock();
-        double shellTime = ((double)(end - start)) / CLOCKS_PER_SEC * 1000; // 毫秒
-        
-        // 测试快速排序
-        start = clock();
-        quickSort(quickArray, size);
-        end = clock();
-        double quickTime = ((double)(end - start)) / CLOCKS_PER_SEC * 1000; // 毫秒
-        
-        // 测试选择排序
-        start = clock();
-        selectionSort(selectArray, size);
-        end = clock();
-        double selectTime = ((double)(end - start)) / CLOCKS_PER_SEC * 1000; // 毫秒
-        
-        // 输出结果
-        fprintf(outputFile, "| %6d | %12.2f | %12.2f | %13.2f |\n", 
-                size, shellTime, quickTime, selectTime);
-        
-        // 释放内存
-        free(originalArray);
-        free(shellArray);
-        free(quickArray);
-        free(selectArray);
     }
     
+    printf("\n成功从文件读取了%d个数据用于性能测试\n数据来源: %s\n\n", size, filepath);
+    
+    // 创建信号元素数组
+    SignalElement* originalArray = (SignalElement*)malloc(size * sizeof(SignalElement));
+    if (originalArray == NULL) {
+        printf("内存分配失败\n");
+        free(distanceValues);
+        fclose(outputFile);
+        return;
+    }
+    
+    // 初始化信号元素数组
+    for (int i = 0; i < size; i++) {
+        originalArray[i].distance = distanceValues[i];  // 距离值作为距离
+    }
+    
+    fprintf(outputFile, "数据量: %d 个元素\n\n", size);
+    fprintf(outputFile, "| 算法名称 | 运行时间 (ms) |\n");
+    fprintf(outputFile, "|----------|---------------|\n");
+    
+    // 为每种排序算法创建副本
+    SignalElement* shellArray = (SignalElement*)malloc(size * sizeof(SignalElement));
+    SignalElement* quickArray = (SignalElement*)malloc(size * sizeof(SignalElement));
+    SignalElement* selectArray = (SignalElement*)malloc(size * sizeof(SignalElement));
+    
+    if (shellArray == NULL || quickArray == NULL || selectArray == NULL) {
+        printf("内存分配失败\n");
+        free(originalArray);
+        if (shellArray) free(shellArray);
+        if (quickArray) free(quickArray);
+        if (selectArray) free(selectArray);
+        free(distanceValues);
+        fclose(outputFile);
+        return;
+    }
+    
+    copyArray(shellArray, originalArray, size);
+    copyArray(quickArray, originalArray, size);
+    copyArray(selectArray, originalArray, size);
+    
+    // 测试希尔排序
+    clock_t start = clock();
+    shellSort(shellArray, size);
+    clock_t end = clock();
+    double shellTime = ((double)(end - start)) / CLOCKS_PER_SEC * 1000; // 毫秒
+    
+    // 测试快速排序
+    start = clock();
+    quickSort(quickArray, size);
+    end = clock();
+    double quickTime = ((double)(end - start)) / CLOCKS_PER_SEC * 1000; // 毫秒
+    
+    // 测试选择排序
+    start = clock();
+    selectionSort(selectArray, size);
+    end = clock();
+    double selectTime = ((double)(end - start)) / CLOCKS_PER_SEC * 1000; // 毫秒
+    
+    // 输出结果
+    fprintf(outputFile, "| 希尔排序 | %13.2f |\n", shellTime);
+    fprintf(outputFile, "| 快速排序 | %13.2f |\n", quickTime);
+    fprintf(outputFile, "| 选择排序 | %13.2f |\n", selectTime);
+    
+    // 释放内存
+    free(originalArray);
+    free(shellArray);
+    free(quickArray);
+    free(selectArray);
+    free(distanceValues);
+    
     fprintf(outputFile, "\n注：时间单位为毫秒 (ms)。测试环境：MacOS。\n");
+    fprintf(outputFile, "数据来源：%s（%d个数据点）\n", filepath, size);
     fclose(outputFile);
     printf("性能测试完成，结果已保存到运行时间对比.txt文件中\n");
 }
@@ -256,16 +272,27 @@ int main() {
     // 设置随机数种子
     srand((unsigned int)time(NULL));
     
+    // 完整文件路径
+    const char* filepath = "./计算得出的距离.txt";
+    
     // 读取距离数据
     double* distanceValues;
-    int size = readDistancesFromFile("./计算得出的距离.txt", &distanceValues);
+    int size = readDistancesFromFile(filepath, &distanceValues);
     
     if (size <= 0) {
-        printf("读取数据失败或数据为空\n");
-        return -1;
+        printf("读取数据失败或数据为空，请检查文件路径: %s\n", filepath);
+        // 尝试绝对路径
+        filepath = "/Users/User/Desktop/Data structure experiment/PDS01-2042220220821江一诺/实验四/计算得出的距离.txt";
+        printf("尝试使用绝对路径: %s\n", filepath);
+        size = readDistancesFromFile(filepath, &distanceValues);
+        
+        if (size <= 0) {
+            printf("使用绝对路径仍然失败，请确认文件存在并有读取权限\n");
+            return -1;
+        }
     }
     
-    printf("\n成功从计算得出的距离.txt读取了%d个数据\n\n", size);
+    printf("\n成功读取了%d个数据\n\n", size);
     
     // 创建信号元素数组
     SignalElement* signals = (SignalElement*)malloc(size * sizeof(SignalElement));
@@ -275,12 +302,14 @@ int main() {
         return -1;
     }
     
-    // 初始化信号元素数组，将距离值同时用作信号值和距离值
+    // 初始化信号元素数组
     for (int i = 0; i < size; i++) {
-        signals[i].value = distanceValues[i];     // 距离值作为信号值
         signals[i].distance = distanceValues[i];  // 距离值作为距离
-        // 打印读取的值，用于调试
-        printf("信号[%d]: 值=%.6f, 距离=%.6f\n", i, signals[i].value, signals[i].distance);
+        // 打印少量示例，避免输出过多
+        if (i < 10 || i > size - 10) {
+            printf("信号[%d]: 距离=%.6f\n", i, signals[i].distance);
+            if (i == 10) printf("... (省略中间数据) ...\n");
+        }
     }
     
     // 复制数组以便使用不同排序算法
@@ -302,24 +331,53 @@ int main() {
         signalsSelect[i] = signals[i];
     }
     
-
-    printf("\n排序前:\n");
-    printArray(signalsShell, size);
+    printf("\n排序前 (仅显示前10个元素):\n");
+    for (int i = 0; i < 10 && i < size; i++) {
+        printf("距离: %.6f\n", signalsShell[i].distance);
+    }
+    printf("... (总共 %d 个元素) ...\n\n", size);
 
     // 使用希尔排序
+    printf("开始希尔排序...\n");
+    clock_t start = clock();
     shellSort(signalsShell, size);
-    printf("希尔排序后:\n");
-    printArray(signalsShell, size);
+    clock_t end = clock();
+    double shellTime = ((double)(end - start)) / CLOCKS_PER_SEC * 1000; // 毫秒
+    printf("希尔排序完成，用时 %.2f 毫秒\n", shellTime);
+    
+    printf("希尔排序后 (仅显示前10个元素):\n");
+    for (int i = 0; i < 10 && i < size; i++) {
+        printf("距离: %.6f\n", signalsShell[i].distance);
+    }
+    printf("... (总共 %d 个元素) ...\n\n", size);
     
     // 使用快速排序
+    printf("开始快速排序...\n");
+    start = clock();
     quickSort(signalsQuick, size);
-    printf("快速排序后:\n");
-    printArray(signalsQuick, size);
+    end = clock();
+    double quickTime = ((double)(end - start)) / CLOCKS_PER_SEC * 1000; // 毫秒
+    printf("快速排序完成，用时 %.2f 毫秒\n", quickTime);
+    
+    printf("快速排序后 (仅显示前10个元素):\n");
+    for (int i = 0; i < 10 && i < size; i++) {
+        printf("距离: %.6f\n", signalsQuick[i].distance);
+    }
+    printf("... (总共 %d 个元素) ...\n\n", size);
     
     // 使用选择排序
+    printf("开始选择排序...\n");
+    start = clock();
     selectionSort(signalsSelect, size);
-    printf("选择排序后:\n");
-    printArray(signalsSelect, size);
+    end = clock();
+    double selectTime = ((double)(end - start)) / CLOCKS_PER_SEC * 1000; // 毫秒
+    printf("选择排序完成，用时 %.2f 毫秒\n", selectTime);
+    
+    printf("选择排序后 (仅显示前10个元素):\n");
+    for (int i = 0; i < 10 && i < size; i++) {
+        printf("距离: %.6f\n", signalsSelect[i].distance);
+    }
+    printf("... (总共 %d 个元素) ...\n\n", size);
     
     // 释放内存
     free(signals);

@@ -3,6 +3,7 @@
 #include <math.h>
 
 // 计算欧几里得距离
+//两个点在多维空间中各维度差值的平方和的平方根
 double euclideanDistance(double *point1, double *point2, int dimension) {
     double sum = 0.0;
     for (int i = 0; i < dimension; i++) {
@@ -13,6 +14,7 @@ double euclideanDistance(double *point1, double *point2, int dimension) {
 }
 
 // 计算街区距离（曼哈顿距离）
+//两个点在多维空间中各维度差值的绝对值之和。
 double manhattanDistance(double *point1, double *point2, int dimension) {
     double sum = 0.0;
     for (int i = 0; i < dimension; i++) {
@@ -22,6 +24,7 @@ double manhattanDistance(double *point1, double *point2, int dimension) {
 }
 
 // 计算余弦距离
+//两个向量之间的余弦相似度，并将其转换为距离1 - cos(θ)
 double cosineDistance(double *point1, double *point2, int dimension) {
     double dotProduct = 0.0;
     double norm1 = 0.0;
