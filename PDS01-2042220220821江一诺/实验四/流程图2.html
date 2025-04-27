@@ -1,0 +1,85 @@
+<svg viewBox="0 0 800 650">
+    <!-- 样式 -->
+    <defs>
+      <style>
+        .bg-rect { fill: white; stroke: none; }
+        .box { fill: #e6f2ff; stroke: #3498db; stroke-width: 2; rx: 5; }
+        .decision { fill: #fff8e1; stroke: #f39c12; stroke-width: 2; }
+        .start-end { fill: #e8f5e9; stroke: #2ecc71; stroke-width: 2; rx: 15; }
+        .connector { fill: none; stroke: #7f8c8d; stroke-width: 2; marker-end: url(#arrowhead); }
+        .text { font-family: "Microsoft YaHei", Arial; font-size: 14px; text-anchor: middle; }
+        .small-text { font-family: "Microsoft YaHei", Arial; font-size: 12px; text-anchor: middle; }
+        .boundary { fill: #ffecb3; stroke: #e67e22; stroke-width: 2; stroke-dasharray: 5, 3; rx: 5; }
+      </style>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#7f8c8d" />
+      </marker>
+    </defs>
+    
+    <!-- 背景 -->
+    <rect class="bg-rect" width="800" height="650" />
+    
+    <!-- 标题 -->
+    <text x="400" y="30" font-family="Microsoft YaHei, Arial" font-size="20" font-weight="bold" text-anchor="middle">快速排序算法流程图</text>
+    
+    <!-- 主函数 -->
+    <rect class="start-end" x="350" y="60" width="100" height="40" />
+    <text class="text" x="400" y="85">快速排序</text>
+    
+    <!-- 调用递归 -->
+    <rect class="box" x="275" y="120" width="250" height="40" />
+    <text class="text" x="400" y="145">调用快速排序递归(array, 0, size-1)</text>
+    
+    <!-- 递归函数 -->
+    <rect class="start-end" x="350" y="180" width="100" height="40" />
+    <text class="text" x="400" y="205">快速排序递归</text>
+    
+    <!-- 边界条件检查 -->
+    <path class="decision" d="M300,240 L400,260 L500,240 L500,300 L400,320 L300,300 Z" />
+    <text class="small-text" x="400" y="285">low < high?</text>
+    <rect class="boundary" x="510" y="240" width="140" height="40" />
+    <text class="small-text" x="580" y="265">边界条件:</text>
+    <text class="small-text" x="580" y="280">low < high</text>
+    
+    <!-- 分区 -->
+    <rect class="box" x="300" y="340" width="200" height="40" />
+    <text class="text" x="400" y="365">pi = 分区(array, low, high)</text>
+    
+    <!-- 递归调用 -->
+    <rect class="box" x="250" y="400" width="300" height="40" />
+    <text class="text" x="400" y="425">快速排序递归(array, low, pi-1)</text>
+    
+    <rect class="box" x="250" y="460" width="300" height="40" />
+    <text class="text" x="400" y="485">快速排序递归(array, pi+1, high)</text>
+    
+    <!-- 分区函数 -->
+    <rect class="start-end" x="350" y="520" width="100" height="40" />
+    <text class="text" x="400" y="545">分区函数</text>
+    
+    <!-- 分区过程 -->
+    <rect class="box" x="190" y="580" width="420" height="60" />
+    <text class="small-text" x="400" y="595">1. 选择基准值 pivot = array[high].distance</text>
+    <text class="small-text" x="400" y="610">2. 初始化 i = low-1</text>
+    <text class="small-text" x="400" y="625">3. 对 j=low 到 high-1: 和基准值比较并交换</text>
+    <text class="small-text" x="400" y="640">4. 交换 array[i+1] 和 array[high], 返回 i+1</text>
+    
+    <!-- 结束 -->
+    <rect class="start-end" x="580" y="280" width="100" height="40" />
+    <text class="text" x="630" y="305">返回</text>
+    
+    <!-- 连接线 -->
+    <path class="connector" d="M400,100 L400,120" />
+    <path class="connector" d="M400,160 L400,180" />
+    <path class="connector" d="M400,220 L400,240" />
+    <path class="connector" d="M400,320 L400,340" />
+    <path class="connector" d="M400,380 L400,400" />
+    <path class="connector" d="M400,440 L400,460" />
+    <path class="connector" d="M400,500 L400,520" />
+    <path class="connector" d="M400,560 L400,580" />
+    <path class="connector" d="M500,280 L580,280" />
+    <path class="connector" d="M300,280 L200,280 L200,500 L250,500" stroke="none" />
+    
+    <!-- 路径标签 -->
+    <text class="small-text" x="520" y="270">否</text>
+    <text class="small-text" x="385" y="335">是</text>
+  </svg>

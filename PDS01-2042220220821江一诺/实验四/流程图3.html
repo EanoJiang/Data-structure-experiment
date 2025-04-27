@@ -1,0 +1,117 @@
+<svg viewBox="0 0 800 600">
+    <!-- 样式 -->
+    <defs>
+      <style>
+        .bg-rect { fill: white; stroke: none; }
+        .box { fill: #e6f2ff; stroke: #3498db; stroke-width: 2; rx: 5; }
+        .decision { fill: #fff8e1; stroke: #f39c12; stroke-width: 2; }
+        .start-end { fill: #e8f5e9; stroke: #2ecc71; stroke-width: 2; rx: 15; }
+        .connector { fill: none; stroke: #7f8c8d; stroke-width: 2; marker-end: url(#arrowhead); }
+        .text { font-family: "Microsoft YaHei", Arial; font-size: 14px; text-anchor: middle; }
+        .small-text { font-family: "Microsoft YaHei", Arial; font-size: 12px; text-anchor: middle; }
+        .boundary { fill: #ffecb3; stroke: #e67e22; stroke-width: 2; stroke-dasharray: 5, 3; rx: 5; }
+      </style>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#7f8c8d" />
+      </marker>
+    </defs>
+    
+    <!-- 背景 -->
+    <rect class="bg-rect" width="800" height="600" />
+    
+    <!-- 标题 -->
+    <text x="400" y="30" font-family="Microsoft YaHei, Arial" font-size="20" font-weight="bold" text-anchor="middle">选择排序算法流程图</text>
+    
+    <!-- 开始 -->
+    <rect class="start-end" x="350" y="60" width="100" height="40" />
+    <text class="text" x="400" y="85">开始</text>
+    
+    <!-- 初始化 -->
+    <rect class="box" x="300" y="120" width="200" height="40" />
+    <text class="text" x="400" y="145">初始化 i = 0</text>
+    
+    <!-- 外层循环检查 -->
+    <path class="decision" d="M300,180 L400,200 L500,180 L500,240 L400,260 L300,240 Z" />
+    <text class="small-text" x="400" y="225">i < size-1?</text>
+    <rect class="boundary" x="520" y="180" width="140" height="40" />
+    <text class="small-text" x="590" y="205">边界条件:</text>
+    <text class="small-text" x="590" y="220">i < size-1</text>
+    
+    <!-- 设置最小值索引 -->
+    <rect class="box" x="300" y="280" width="200" height="40" />
+    <text class="text" x="400" y="305">min_idx = i</text>
+    
+    <!-- 初始化内层循环 -->
+    <rect class="box" x="300" y="340" width="200" height="40" />
+    <text class="text" x="400" y="365">初始化 j = i+1</text>
+    
+    <!-- 内层循环检查 -->
+    <path class="decision" d="M300,400 L400,420 L500,400 L500,460 L400,480 L300,460 Z" />
+    <text class="small-text" x="400" y="445">j < size?</text>
+    <rect class="boundary" x="520" y="400" width="140" height="40" />
+    <text class="small-text" x="590" y="425">边界条件:</text>
+    <text class="small-text" x="590" y="440">j < size</text>
+    
+    <!-- 比较元素 -->
+    <path class="decision" d="M80,400 L200,420 L320,400 L320,460 L200,480 L80,460 Z" />
+    <text class="small-text" x="200" y="430">array[j].distance <</text>
+    <text class="small-text" x="200" y="450">array[min_idx].distance?</text>
+    
+    <!-- 更新最小值索引 -->
+    <rect class="box" x="140" y="500" width="120" height="40" />
+    <text class="small-text" x="200" y="525">min_idx = j</text>
+    
+    <!-- 交换检查 -->
+    <path class="decision" d="M300,500 L400,520 L500,500 L500,560 L400,580 L300,560 Z" />
+    <text class="small-text" x="400" y="535">min_idx != i?</text>
+    
+    <!-- 交换元素 -->
+    <rect class="box" x="580" y="500" width="180" height="60" />
+    <text class="small-text" x="670" y="525">交换 array[i]</text>
+    <text class="small-text" x="670" y="540">和 array[min_idx]</text>
+    
+    <!-- 更新j -->
+    <rect class="box" x="20" y="440" width="80" height="30" />
+    <text class="small-text" x="60" y="460">j++</text>
+    
+    <!-- 更新i -->
+    <rect class="box" x="670" y="220" width="80" height="30" />
+    <text class="small-text" x="710" y="240">i++</text>
+    
+    <!-- 结束 -->
+    <rect class="start-end" x="650" y="150" width="100" height="40" />
+    <text class="text" x="700" y="175">结束</text>
+    
+    <!-- 连接线 -->
+    <path class="connector" d="M400,100 L400,120" />
+    <path class="connector" d="M400,160 L400,180" />
+    <path class="connector" d="M400,260 L400,280" />
+    <path class="connector" d="M400,320 L400,340" />
+    <path class="connector" d="M400,380 L400,400" />
+    <path class="connector" d="M500,440 L580,440 L580,535" />
+    <path class="connector" d="M300,440 L320,440" />
+    <path class="connector" d="M320,440 L200,440" stroke="none" />
+    <path class="connector" d="M80,440 L60,440" />
+    <path class="connector" d="M60,470 L60,500 L140,500" stroke="none" />
+    <path class="connector" d="M200,480 L200,500" />
+    <path class="connector" d="M400,480 L400,500" />
+    <path class="connector" d="M500,535 L580,535" />
+    <path class="connector" d="M300,535 L250,535 L250,580 L610,580 L610,560" stroke="none" />
+    <path class="connector" d="M670,500 L670,300 L500,300" stroke="none" />
+    <path class="connector" d="M670,450 L670,300" stroke="none" />
+    <path class="connector" d="M710,220 L710,160" />
+    <path class="connector" d="M710,160 L650,160" stroke="none" />
+    <path class="connector" d="M710,250 L710,300 L500,300" stroke="none" />
+    <path class="connector" d="M500,220 L670,220" />
+    <path class="connector" d="M300,220 L250,220 L250,180 L300,180" stroke="none" />
+    
+    <!-- 路径标签 -->
+    <text class="small-text" x="520" y="210">否</text>
+    <text class="small-text" x="385" y="275">是</text>
+    <text class="small-text" x="520" y="430">否</text>
+    <text class="small-text" x="385" y="495">是</text>
+    <text class="small-text" x="280" y="430">是</text>
+    <text class="small-text" x="140" y="430">否</text>
+    <text class="small-text" x="520" y="525">是</text>
+    <text class="small-text" x="385" y="565">否</text>
+  </svg>

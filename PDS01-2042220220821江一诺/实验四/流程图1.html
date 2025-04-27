@@ -1,0 +1,103 @@
+<svg viewBox="0 0 800 650">
+    <!-- 样式 -->
+    <defs>
+      <style>
+        .bg-rect { fill: white; stroke: none; }
+        .box { fill: #e6f2ff; stroke: #3498db; stroke-width: 2; rx: 5; }
+        .decision { fill: #fff8e1; stroke: #f39c12; stroke-width: 2; }
+        .start-end { fill: #e8f5e9; stroke: #2ecc71; stroke-width: 2; rx: 15; }
+        .connector { fill: none; stroke: #7f8c8d; stroke-width: 2; marker-end: url(#arrowhead); }
+        .text { font-family: "Microsoft YaHei", Arial; font-size: 14px; text-anchor: middle; }
+        .small-text { font-family: "Microsoft YaHei", Arial; font-size: 12px; text-anchor: middle; }
+        .code-text { font-family: monospace; font-size: 12px; text-anchor: middle; }
+      </style>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#7f8c8d" />
+      </marker>
+    </defs>
+    
+    <!-- 背景 -->
+    <rect class="bg-rect" width="800" height="650" />
+    
+    <!-- 标题 -->
+    <text x="400" y="30" font-family="Microsoft YaHei, Arial" font-size="20" font-weight="bold" text-anchor="middle">希尔排序算法流程图</text>
+    
+    <!-- 开始 -->
+    <rect class="start-end" x="350" y="50" width="100" height="40" />
+    <text class="text" x="400" y="75">开始</text>
+    
+    <!-- 初始化 -->
+    <rect class="box" x="300" y="110" width="200" height="40" />
+    <text class="text" x="400" y="135">初始化 gap = size/2</text>
+    
+    <!-- 主循环检查 -->
+    <path class="decision" d="M300,170 L400,190 L500,170 L500,230 L400,250 L300,230 Z" />
+    <text class="text" x="400" y="215">gap > 0?</text>
+    
+    <!-- 内部循环初始化 -->
+    <rect class="box" x="300" y="270" width="200" height="40" />
+    <text class="text" x="400" y="295">初始化 i = gap</text>
+    
+    <!-- 内部循环检查 -->
+    <path class="decision" d="M300,330 L400,350 L500,330 L500,390 L400,410 L300,390 Z" />
+    <text class="text" x="400" y="375">i < size?</text>
+    
+    <!-- 内部处理 -->
+    <rect class="box" x="300" y="430" width="200" height="45" />
+    <text class="small-text" x="400" y="445">temp = array[i]</text>
+    <text class="small-text" x="400" y="465">j = i</text>
+    
+    <!-- 边界条件检查 -->
+    <path class="decision" d="M260,490 L400,510 L540,490 L540,550 L400,570 L260,550 Z" />
+    <text class="small-text" x="400" y="518">j >= gap 且</text>
+    <text class="small-text" x="400" y="538">array[j-gap].distance > temp.distance?</text>
+    
+    <!-- 边界条件为真的操作 -->
+    <rect class="box" x="560" y="515" width="200" height="40" />
+    <text class="small-text" x="660" y="535">array[j] = array[j-gap]</text>
+    <text class="small-text" x="660" y="550">j -= gap</text>
+    
+    <!-- 从边界返回循环 -->
+    <path class="connector" d="M660,515 L660,490 L540,490" />
+    
+    <!-- 设置值 -->
+    <rect class="box" x="300" y="590" width="200" height="40" />
+    <text class="small-text" x="400" y="615">array[j] = temp</text>
+    
+    <!-- 更新i -->
+    <rect class="box" x="120" y="375" width="120" height="30" />
+    <text class="small-text" x="180" y="395">i++</text>
+    
+    <!-- 更新gap -->
+    <rect class="box" x="580" y="215" width="120" height="30" />
+    <text class="small-text" x="640" y="235">gap /= 2</text>
+    
+    <!-- 结束 -->
+    <rect class="start-end" x="580" y="150" width="100" height="40" />
+    <text class="text" x="630" y="175">结束</text>
+    
+    <!-- 连接线 -->
+    <path class="connector" d="M400,90 L400,110" />
+    <path class="connector" d="M400,150 L400,170" />
+    <path class="connector" d="M400,250 L400,270" />
+    <path class="connector" d="M400,310 L400,330" />
+    <path class="connector" d="M400,410 L400,430" />
+    <path class="connector" d="M400,475 L400,490" />
+    <path class="connector" d="M400,570 L400,590" />
+    <path class="connector" d="M400,630 L180,630 L180,405" />
+    <path class="connector" d="M180,375 L180,355 L300,355" />
+    <path class="connector" d="M500,210 L580,210" />
+    <path class="connector" d="M640,215 L640,150 L580,210" stroke="none" />
+    <path class="connector" d="M640,245 L640,270 L450,270" stroke="none" />
+    <path class="connector" d="M300,210 L250,210 L250,150 L300,150" stroke="none" />
+    <path class="connector" d="M300,375 L250,375 L250,330 L300,330" stroke="none" />
+    <path class="connector" d="M540,530 L560,530" />
+    
+    <!-- 路径标签 -->
+    <text class="small-text" x="520" y="200">否</text>
+    <text class="small-text" x="385" y="260">是</text>
+    <text class="small-text" x="520" y="365">否</text>
+    <text class="small-text" x="385" y="420">是</text>
+    <text class="small-text" x="550" y="520">是</text>
+    <text class="small-text" x="385" y="580">否</text>
+  </svg>
