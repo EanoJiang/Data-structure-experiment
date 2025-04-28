@@ -3,7 +3,8 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_SIZE 10000  // 增加容量以支持5000个数据
+#define MAX_SIZE 10000
+#define HASH_SIZE 10007  // 选择一个较大的质数作为哈希表大小
 
 typedef int ElementType;
 
@@ -19,6 +20,18 @@ typedef struct BSTNode {
     struct BSTNode *left;
     struct BSTNode *right;
 } BSTNode, *BSTree;
+
+// 哈希表节点结构
+typedef struct HashNode {
+    ElementType data;
+    struct HashNode *next;  // 拉链法解决冲突
+} HashNode;
+
+// 哈希表结构
+typedef struct {
+    HashNode *table[HASH_SIZE];
+    int count;  // 记录哈希表中的元素数量
+} HashTable;
 
 // 初始化顺序表
 void InitSeqList(SeqList *L) {
@@ -43,22 +56,33 @@ int LoadSeqListFromFile(SeqList *L, const char *filename) {
 }
 //静态表：顺序查找、二分查找
 
-// 顺序查找
-// 在顺序表中逐个比较元素，查找关键字key
-// 参数：L - 顺序表结构，key - 要查找的关键字
-// 返回值：若找到则返回元素下标，未找到返回-1
+// 顺序查找并在未找到时插入
+// 在顺序表中逐个比较元素，查找关键字key，若未找到则将key插入到表尾
+// 参数：L - 顺序表结构指针，key - 要查找的关键字
+// 返回值：若找到则返回元素下标，未找到但插入成功返回-插入位置-1，插入失败返回-1
 // 时间复杂度：O(n)，n为表长
-int SequentialSearch(SeqList L, ElementType key) {
+int SequentialSearchAndInsert(SeqList *L, ElementType key) {
     int i;
-    for (i = 0; i < L.length; i++) {  // 从表头开始，逐个元素进行比较
-        if (L.data[i] == key) {       // 找到匹配的元素
-            return i;  // 返回元素位置（下标）
+    // 先进行顺序查找
+    for (i = 0; i < L->length; i++) {
+        if (L->data[i] == key) {
+            return i;  // 找到匹配元素，返回下标 (0或正数)
         }
     }
-    return -1;  // 遍历完整个表未找到，返回-1表示失败
+    
+    // 未找到元素，尝试插入到表尾
+    if (L->length < MAX_SIZE) {
+        L->data[L->length] = key;
+        int pos = L->length;
+        L->length++;
+        return -pos-1;  // 返回插入位置的负值减1，以区分查找成功的情况
+    }
+    
+    return -1;  // 表已满，插入失败
 }
 
-// 对顺序表进行排序（用于二分查找前的准备）- 使用快速排序提高效率
+// 对顺序表进行排序（用于二分查找前的准备）
+//使用快速排序提高效率
 void Swap(ElementType *a, ElementType *b) {
     ElementType temp = *a;
     *a = *b;
@@ -107,28 +131,47 @@ int SaveSortedListToFile(SeqList L, const char *filename) {
     return 1;
 }
 
-// 二分查找
-// 在已按升序排列的顺序表中使用二分策略查找关键字key
-// 参数：L - 已排序的顺序表结构，key - 要查找的关键字
-// 返回值：若找到则返回元素下标，未找到返回-1
-// 时间复杂度：O(log n)，n为表长
-int BinarySearch(SeqList L, ElementType key) {
-    int low = 0;                // 初始化查找区间的下界
-    int high = L.length - 1;    // 初始化查找区间的上界
+// 二分查找并在未找到时插入
+// 在已按升序排列的顺序表中使用二分策略查找关键字key，若未找到则将key插入适当位置
+// 参数：L - 已排序的顺序表结构指针，key - 要查找的关键字
+// 返回值：若找到则返回元素下标，未找到但插入成功返回-插入位置-1，插入失败返回-1
+// 时间复杂度：O(log n) + O(n)，查找O(log n)，插入最坏需要O(n)移动元素
+int BinarySearchAndInsert(SeqList *L, ElementType key) {
+    int low = 0;
+    int high = L->length - 1;
     int mid;
+    int insert_pos = 0;
     
-    while (low <= high) {       // 当查找区间有效时继续查找
-        mid = low + (high - low) / 2;  // 计算中间位置（避免整数溢出）
-        if (L.data[mid] == key) {
-            return mid;          // 找到元素，返回位置
-        } else if (L.data[mid] > key) {
-            high = mid - 1;      // 中间值大于目标值，在左半区间查找
+    // 二分查找过程
+    while (low <= high) {
+        mid = low + (high - low) / 2;
+        if (L->data[mid] == key) {
+            return mid;  // 找到匹配元素，返回正数下标
+        } else if (L->data[mid] > key) {
+            high = mid - 1;
         } else {
-            low = mid + 1;       // 中间值小于目标值，在右半区间查找
+            low = mid + 1;
         }
     }
     
-    return -1;  // 查找区间缩小到空仍未找到，返回-1表示失败
+    // 未找到元素，计算应该插入的位置
+    insert_pos = low;  // low为应插入的位置
+    
+    // 检查表是否已满
+    if (L->length >= MAX_SIZE) {
+        return -1;  // 表已满，插入失败
+    }
+    
+    // 从后向前移动元素，为新元素腾出位置
+    for (int i = L->length; i > insert_pos; i--) {
+        L->data[i] = L->data[i-1];
+    }
+    
+    // 插入新元素
+    L->data[insert_pos] = key;
+    L->length++;
+    
+    return -insert_pos-1;  // 返回插入位置的负值减1，以区分查找成功
 }
 
 // 创建二叉排序树节点
@@ -158,7 +201,6 @@ BSTree InsertBST(BSTree T, ElementType key) {
         // 插入右子树
         T->right = InsertBST(T->right, key);
     }
-    // 如果key已存在，不做任何操作
     
     return T;
 }
@@ -183,22 +225,25 @@ BSTree BuildBSTFromFile(const char *filename) {
 }
 
 //动态表：二叉排序树查找
-// 在二叉排序树中查找
-// 递归地在二叉排序树中查找关键字key
-// 参数：T - 二叉排序树根节点指针，key - 要查找的关键字
-// 返回值：若找到则返回目标节点指针，未找到返回NULL
-// 时间复杂度：平均O(log n)，最坏O(n)，n为树中节点数
-BSTNode* SearchBST(BSTree T, ElementType key) {
-    // 递归终止条件：树为空（未找到）或找到关键字
-    if (T == NULL || T->data == key) {
-        return T;
+// 在二叉排序树中查找并在未找到时插入
+// 参数：T - 二叉排序树根节点指针的指针，key - 要查找的关键字
+// 返回值：1表示找到元素，0表示未找到但已插入新元素
+int SearchBSTAndInsert(BSTree *T, ElementType key) {
+    // 树为空或找到目标节点
+    if (*T == NULL) {
+        // 未找到，创建新节点并插入
+        *T = CreateBSTNode(key);
+        return 0;  // 表示插入了新节点
     }
     
-    // 二叉排序树的特性：小值在左，大值在右
-    if (key < T->data) {
-        return SearchBST(T->left, key);  // 目标值小于当前节点值，在左子树中查找
+    if (key == (*T)->data) {
+        return 1;  // 找到匹配元素
+    } else if (key < (*T)->data) {
+        // 在左子树中继续查找
+        return SearchBSTAndInsert(&((*T)->left), key);
     } else {
-        return SearchBST(T->right, key); // 目标值大于当前节点值，在右子树中查找
+        // 在右子树中继续查找
+        return SearchBSTAndInsert(&((*T)->right), key);
     }
 }
 
@@ -220,6 +265,7 @@ int BSTHeight(BSTree T) {
     int leftHeight = BSTHeight(T->left);
     int rightHeight = BSTHeight(T->right);
     
+    //取较大值
     return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
 }
 
@@ -245,15 +291,152 @@ void PrintSeqListSummary(SeqList L) {
     printf("...\n");
 }
 
-// 中序遍历打印二叉排序树的部分内容
-void InOrderTraversalPartial(BSTree T, int *count, int max_display) {
-    if (T != NULL && *count < max_display) {
-        InOrderTraversalPartial(T->left, count, max_display);
-        if (*count < max_display) {
-            printf("%d ", T->data);
-            (*count)++;
+// 哈希函数
+int HashFunction(ElementType key) {
+    return key % HASH_SIZE;
+}
+
+// 初始化哈希表
+void InitHashTable(HashTable *H) {
+    int i;
+    for (i = 0; i < HASH_SIZE; i++) {
+        H->table[i] = NULL;
+    }
+    H->count = 0;
+}
+
+// 在哈希表中插入元素
+void InsertHash(HashTable *H, ElementType key) {
+    int pos = HashFunction(key);
+    
+    // 创建新节点
+    HashNode *newNode = (HashNode*)malloc(sizeof(HashNode));
+    if (newNode == NULL) {
+        printf("内存分配失败\n");
+        return;
+    }
+    
+    newNode->data = key;
+    
+    // 头插法插入链表
+    newNode->next = H->table[pos];
+    H->table[pos] = newNode;
+    H->count++;
+}
+
+// 从文件构建哈希表
+HashTable* BuildHashFromFile(const char *filename) {
+    FILE *fp = fopen(filename, "r");
+    if (fp == NULL) {
+        printf("无法打开文件 %s\n", filename);
+        return NULL;
+    }
+    
+    HashTable *H = (HashTable*)malloc(sizeof(HashTable));
+    if (H == NULL) {
+        printf("内存分配失败\n");
+        fclose(fp);
+        return NULL;
+    }
+    
+    InitHashTable(H);
+    
+    int value;
+    while (fscanf(fp, "%d", &value) == 1) {
+        InsertHash(H, value);
+    }
+    
+    fclose(fp);
+    return H;
+}
+
+// 在哈希表中查找并在未找到时插入
+// 参数：H - 哈希表，key - 要查找的关键字
+// 返回值：1表示找到元素，0表示未找到但已插入新元素
+int SearchHashAndInsert(HashTable *H, ElementType key) {
+    int pos = HashFunction(key);
+    HashNode *p = H->table[pos];
+    
+    // 遍历链表查找
+    while (p != NULL) {
+        if (p->data == key) {
+            return 1;  // 找到元素
         }
-        InOrderTraversalPartial(T->right, count, max_display);
+        p = p->next;
+    }
+    
+    // 未找到元素，执行插入操作
+    InsertHash(H, key);
+    return 0;  // 表示插入了新元素
+}
+
+// 释放哈希表内存
+void FreeHashTable(HashTable *H) {
+    int i;
+    for (i = 0; i < HASH_SIZE; i++) {
+        HashNode *current = H->table[i];
+        while (current != NULL) {
+            HashNode *temp = current;
+            current = current->next;
+            free(temp);
+        }
+        H->table[i] = NULL;
+    }
+    free(H);
+}
+
+// 计算哈希表中的冲突次数和平均查找长度
+void HashTableStats(HashTable *H, int *conflicts, float *asl) {
+    int i;
+    int total_conflicts = 0;
+    int total_length = 0;
+    int chains = 0;  // 实际有数据的链表数
+    
+    for (i = 0; i < HASH_SIZE; i++) {
+        int chain_length = 0;
+        HashNode *p = H->table[i];
+        
+        // 计算链长
+        while (p != NULL) {
+            chain_length++;
+            p = p->next;
+        }
+        
+        if (chain_length > 0) {
+            chains++;
+            if (chain_length > 1) {
+                total_conflicts += (chain_length - 1);
+            }
+            total_length += chain_length;
+        }
+    }
+    
+    *conflicts = total_conflicts;
+    // 平均查找长度计算
+    if (chains > 0) {
+        *asl = (float)total_length / chains;
+    } else {
+        *asl = 0.0;
+    }
+}
+
+// 为保持兼容性，保留原始的搜索函数
+// 在二叉排序树中查找
+// 递归地在二叉排序树中查找关键字key
+// 参数：T - 二叉排序树根节点指针，key - 要查找的关键字
+// 返回值：若找到则返回目标节点指针，未找到返回NULL
+// 时间复杂度：平均O(log n)，最坏O(n)，n为树中节点数
+BSTNode* SearchBST(BSTree T, ElementType key) {
+    // 递归终止条件：树为空（未找到）或找到关键字
+    if (T == NULL || T->data == key) {
+        return T;
+    }
+    
+    // 二叉排序树的特性：小值在左，大值在右
+    if (key < T->data) {
+        return SearchBST(T->left, key);  // 目标值小于当前节点值，在左子树中查找
+    } else {
+        return SearchBST(T->right, key); // 目标值大于当前节点值，在右子树中查找
     }
 }
 
@@ -268,7 +451,7 @@ int main() {
         printf("加载数据失败，创建测试数据...\n");
         // 如果文件不存在，创建一些测试数据
         int i;
-        for (i = 0; i < 100; i++) {  // 创建100个数据作为示例
+        for (i = 0; i < 100; i++) {  
             L.data[L.length++] = rand() % 10000;
         }
         
@@ -293,22 +476,27 @@ int main() {
     
     clock_t start, end;
     double cpu_time_used;
-    double seq_time, bin_time, bst_time, sort_time;
+    double seq_time, bin_time, bst_time, sort_time, hash_time;
     int seq_pos, bin_pos;
     BSTNode* bst_result;
+    int hash_result;
     
     // 顺序查找测试
     start = clock();
-    seq_pos = SequentialSearch(L, key);
+    seq_pos = SequentialSearchAndInsert(&L, key);
     end = clock();
-    seq_time = ((double) (end - start)) / CLOCKS_PER_SEC;
+    seq_time = ((double) (end - start)) / CLOCKS_PER_SEC * 1000.0; // 转换为毫秒
     
-    if (seq_pos != -1) {
+    if (seq_pos >= 0) {
         printf("\n1. 顺序查找：找到关键字 %d，位置为 %d\n", key, seq_pos);
+    } else if (seq_pos != -1) {
+        // 插入成功，计算真实位置
+        int insert_pos = -seq_pos - 1;
+        printf("\n1. 顺序查找：未找到关键字 %d，已插入到位置 %d\n", key, insert_pos);
     } else {
-        printf("\n1. 顺序查找：未找到关键字 %d\n", key);
+        printf("\n1. 顺序查找：未找到关键字 %d，表已满无法插入\n", key);
     }
-    printf("   顺序查找耗时: %f 秒\n", seq_time);
+    printf("   顺序查找耗时: %.3f 毫秒\n", seq_time);
     
     // 2. 二分查找测试
     // 先排序
@@ -316,8 +504,8 @@ int main() {
     start = clock();
     SortSeqList(&L);
     end = clock();
-    sort_time = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("排序耗时: %f 秒\n", sort_time);
+    sort_time = ((double) (end - start)) / CLOCKS_PER_SEC * 1000.0; // 转换为毫秒
+    printf("排序耗时: %.3f 毫秒\n", sort_time);
     
     // 将排序后的内容保存到文件
     if (SaveSortedListToFile(L, "sorted_data.txt")) {
@@ -327,16 +515,20 @@ int main() {
     }
     
     start = clock();
-    bin_pos = BinarySearch(L, key);
+    bin_pos = BinarySearchAndInsert(&L, key);
     end = clock();
-    bin_time = ((double) (end - start)) / CLOCKS_PER_SEC;
+    bin_time = ((double) (end - start)) / CLOCKS_PER_SEC * 1000.0; // 转换为毫秒
     
-    if (bin_pos != -1) {
+    if (bin_pos >= 0) {
         printf("\n2. 二分查找：找到关键字 %d，位置为 %d\n", key, bin_pos);
+    } else if (bin_pos != -1) {
+        // 插入成功，计算真实位置
+        int insert_pos = -bin_pos - 1;
+        printf("\n2. 二分查找：未找到关键字 %d，已插入到位置 %d\n", key, insert_pos);
     } else {
-        printf("\n2. 二分查找：未找到关键字 %d\n", key);
+        printf("\n2. 二分查找：未找到关键字 %d，表已满无法插入\n", key);
     }
-    printf("   二分查找耗时: %f 秒\n", bin_time);
+    printf("   二分查找耗时: %.3f 毫秒\n", bin_time);
     
     // 3. 二叉排序树查找
     // 构建二叉排序树
@@ -344,32 +536,69 @@ int main() {
     start = clock();
     BSTree bst = BuildBSTFromFile("data.txt");
     end = clock();
-    double bst_build_time = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("构建二叉排序树耗时: %f 秒\n", bst_build_time);
+    double bst_build_time = ((double) (end - start)) / CLOCKS_PER_SEC * 1000.0; // 转换为毫秒
+    printf("构建二叉排序树耗时: %.3f 毫秒\n", bst_build_time);
     
     int bst_height = BSTHeight(bst);
     int bst_node_count = BSTNodeCount(bst);
     printf("二叉排序树高度: %d, 节点数: %d\n", bst_height, bst_node_count);
     
     start = clock();
-    bst_result = SearchBST(bst, key);
+    int bst_insert_result = SearchBSTAndInsert(&bst, key);
     end = clock();
-    bst_time = ((double) (end - start)) / CLOCKS_PER_SEC;
+    bst_time = ((double) (end - start)) / CLOCKS_PER_SEC * 1000.0; // 转换为毫秒
     
-    if (bst_result != NULL) {
+    if (bst_insert_result == 1) {
         printf("\n3. 二叉排序树查找：找到关键字 %d\n", key);
     } else {
-        printf("\n3. 二叉排序树查找：未找到关键字 %d\n", key);
+        printf("\n3. 二叉排序树查找：未找到关键字 %d，已成功插入\n", key);
+        // 更新树的高度和节点数
+        bst_height = BSTHeight(bst);
+        bst_node_count = BSTNodeCount(bst);
+        printf("   插入后二叉排序树高度: %d, 节点数: %d\n", bst_height, bst_node_count);
     }
-    printf("   二叉排序树查找耗时: %f 秒\n", bst_time);
+    printf("   二叉排序树查找耗时: %.3f 毫秒\n", bst_time);
     
     // 释放二叉排序树
     FreeBST(bst);
+    
+    // 4. 哈希表查找
+    printf("\n正在构建哈希表...\n");
+    start = clock();
+    HashTable *hashTable = BuildHashFromFile("data.txt");
+    end = clock();
+    double hash_build_time = ((double) (end - start)) / CLOCKS_PER_SEC * 1000.0; // 转换为毫秒
+    printf("构建哈希表耗时: %.3f 毫秒\n", hash_build_time);
+    
+    // 计算冲突次数和平均查找长度
+    int conflicts;
+    float asl;
+    HashTableStats(hashTable, &conflicts, &asl);
+    printf("哈希表冲突次数: %d, 平均查找长度: %.2f\n", conflicts, asl);
+    
+    start = clock();
+    int hash_insert_result = SearchHashAndInsert(hashTable, key);
+    end = clock();
+    hash_time = ((double) (end - start)) / CLOCKS_PER_SEC * 1000.0; // 转换为毫秒
+    
+    if (hash_insert_result == 1) {
+        printf("\n4. 哈希表查找：找到关键字 %d\n", key);
+    } else {
+        printf("\n4. 哈希表查找：未找到关键字 %d，已成功插入\n", key);
+        // 重新计算哈希表统计信息
+        HashTableStats(hashTable, &conflicts, &asl);
+        printf("   插入后哈希表冲突次数: %d, 平均查找长度: %.2f\n", conflicts, asl);
+    }
+    printf("   哈希表查找耗时: %.3f 毫秒\n", hash_time);
+    
+    // 释放哈希表
+    FreeHashTable(hashTable);
     
     printf("\n性能分析：\n");
     printf("1. 顺序查找 - 时间复杂度O(n)，适合于数据量小的情况\n");
     printf("2. 二分查找 - 时间复杂度O(log n)，但需要先对数据排序\n");
     printf("3. 二叉排序树 - 平均查找时间复杂度O(log n)，最坏情况O(n)\n");
+    printf("4. 哈希表查找 - 平均时间复杂度O(1)，最坏情况O(n)\n");
     
     // 将查找时间和性能分析保存到文件
     FILE *perf_file = fopen("性能分析.txt", "w");
@@ -379,46 +608,62 @@ int main() {
         fprintf(perf_file, "数据量: %d 个元素\n", L.length);
         fprintf(perf_file, "查找关键字: %d\n\n", key);
         
-        fprintf(perf_file, "| 算法名称         | 运行时间 (秒) |\n");
+        fprintf(perf_file, "| 算法名称         | 运行时间 (毫秒) |\n");
         fprintf(perf_file, "|-----------------|---------------|\n");
-        fprintf(perf_file, "| 顺序查找         | %13.6f |\n", seq_time);
-        fprintf(perf_file, "| 二分查找         | %13.6f |\n", bin_time);
-        fprintf(perf_file, "| 二叉排序树查找    | %13.6f |\n", bst_time);
+        fprintf(perf_file, "| 顺序查找         | %13.3f |\n", seq_time);
+        fprintf(perf_file, "| 二分查找         | %13.3f |\n", bin_time);
+        fprintf(perf_file, "| 二叉排序树查找    | %13.3f |\n", bst_time);
+        fprintf(perf_file, "| 哈希表查找       | %13.3f |\n", hash_time);
         fprintf(perf_file, "\n");
         
         fprintf(perf_file, "预处理时间:\n");
-        fprintf(perf_file, "| 预处理步骤       | 运行时间 (秒) |\n");
+        fprintf(perf_file, "| 预处理步骤       | 运行时间 (毫秒) |\n");
         fprintf(perf_file, "|-----------------|---------------|\n");
-        fprintf(perf_file, "| 排序操作         | %13.6f |\n", sort_time);
-        fprintf(perf_file, "| 构建二叉排序树    | %13.6f |\n\n", bst_build_time);
+        fprintf(perf_file, "| 排序操作         | %13.3f |\n", sort_time);
+        fprintf(perf_file, "| 构建二叉排序树    | %13.3f |\n", bst_build_time);
+        fprintf(perf_file, "| 构建哈希表       | %13.3f |\n\n", hash_build_time);
         
         fprintf(perf_file, "查找结果:\n");
-        if (seq_pos != -1) {
+        if (seq_pos >= 0) {
             fprintf(perf_file, "- 顺序查找：找到关键字 %d，位置为 %d\n", key, seq_pos);
+        } else if (seq_pos != -1) {
+            int insert_pos = -seq_pos - 1;
+            fprintf(perf_file, "- 顺序查找：未找到关键字 %d，已插入到位置 %d\n", key, insert_pos);
         } else {
-            fprintf(perf_file, "- 顺序查找：未找到关键字 %d\n", key);
+            fprintf(perf_file, "- 顺序查找：未找到关键字 %d，表已满无法插入\n", key);
         }
         
-        if (bin_pos != -1) {
+        if (bin_pos >= 0) {
             fprintf(perf_file, "- 二分查找：找到关键字 %d，位置为 %d\n", key, bin_pos);
+        } else if (bin_pos != -1) {
+            int insert_pos = -bin_pos - 1;
+            fprintf(perf_file, "- 二分查找：未找到关键字 %d，已插入到位置 %d\n", key, insert_pos);
         } else {
-            fprintf(perf_file, "- 二分查找：未找到关键字 %d\n", key);
+            fprintf(perf_file, "- 二分查找：未找到关键字 %d，表已满无法插入\n", key);
         }
         
-        if (bst_result != NULL) {
+        if (bst_insert_result == 1) {
             fprintf(perf_file, "- 二叉排序树查找：找到关键字 %d\n", key);
         } else {
-            fprintf(perf_file, "- 二叉排序树查找：未找到关键字 %d\n", key);
+            fprintf(perf_file, "- 二叉排序树查找：未找到关键字 %d，已成功插入\n", key);
         }
         
-        fprintf(perf_file, "\n二叉排序树信息: 高度: %d, 节点数: %d\n\n", bst_height, bst_node_count);
+        if (hash_insert_result == 1) {
+            fprintf(perf_file, "- 哈希表查找：找到关键字 %d\n", key);
+        } else {
+            fprintf(perf_file, "- 哈希表查找：未找到关键字 %d，已成功插入\n", key);
+        }
+        
+        fprintf(perf_file, "\n二叉排序树信息: 高度: %d, 节点数: %d\n", bst_height, bst_node_count);
+        fprintf(perf_file, "哈希表信息: 冲突次数: %d, 平均查找长度: %.2f\n\n", conflicts, asl);
         
         fprintf(perf_file, "算法复杂度分析:\n");
         fprintf(perf_file, "- 顺序查找: O(n)\n");
         fprintf(perf_file, "- 二分查找: O(log n), 但需要先排序 O(n log n)\n");
-        fprintf(perf_file, "- 二叉排序树查找: 平均O(log n), 最坏O(n)\n\n");
+        fprintf(perf_file, "- 二叉排序树查找: 平均O(log n), 最坏O(n)\n");
+        fprintf(perf_file, "- 哈希表查找: 平均O(1), 最坏O(n)\n\n");
         
-        fprintf(perf_file, "注：时间单位为秒。测试环境：%s。\n", "MacOS");
+        fprintf(perf_file, "注：时间单位为毫秒。测试环境：%s。\n", "MacOS");
         fprintf(perf_file, "数据来源：data.txt（%d个数据点）\n", L.length);
         
         fclose(perf_file);
