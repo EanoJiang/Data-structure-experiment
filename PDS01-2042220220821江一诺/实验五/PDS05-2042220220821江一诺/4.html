@@ -1,0 +1,67 @@
+<svg width="600" height="600" xmlns="http://www.w3.org/2000/svg">
+    <!-- 标题 -->
+    <text x="300" y="30" font-size="20" text-anchor="middle" font-weight="bold">哈希表查找流程图</text>
+    
+    <!-- 开始 -->
+    <rect x="250" y="50" width="100" height="50" rx="20" ry="20" fill="#a0d1f2" stroke="black" />
+    <text x="300" y="80" font-size="14" text-anchor="middle">开始</text>
+    
+    <!-- 计算哈希位置 -->
+    <rect x="175" y="130" width="250" height="50" fill="#d4eeff" stroke="black" />
+    <text x="300" y="160" font-size="14" text-anchor="middle">计算哈希位置 pos = hash(key)</text>
+    
+    <!-- 获取链表头 -->
+    <rect x="175" y="210" width="250" height="50" fill="#d4eeff" stroke="black" />
+    <text x="300" y="240" font-size="14" text-anchor="middle">获取链表头指针 p = H->table[pos]</text>
+    
+    <!-- 判断链表是否为空 -->
+    <polygon points="300,290 370,330 300,370 230,330" fill="#fffcc9" stroke="black" />
+    <text x="300" y="335" font-size="14" text-anchor="middle">p != NULL?</text>
+    
+    <!-- 比较节点值 -->
+    <polygon points="300,400 370,440 300,480 230,440" fill="#fffcc9" stroke="black" />
+    <text x="300" y="435" font-size="12" text-anchor="middle">p->data == key?</text>
+    
+    <!-- 找到元素 -->
+    <rect x="430" y="415" width="120" height="50" fill="#d5f5d5" stroke="black" />
+    <text x="490" y="445" font-size="14" text-anchor="middle">返回1(找到)</text>
+    
+    <!-- 移动到下一个节点 -->
+    <rect x="225" y="510" width="150" height="50" fill="#d4eeff" stroke="black" />
+    <text x="300" y="540" font-size="14" text-anchor="middle">p = p->next</text>
+    
+    <!-- 插入新节点 -->
+    <rect x="430" y="290" width="150" height="70" fill="#ffcccb" stroke="black" />
+    <text x="505" y="315" font-size="12" text-anchor="middle">创建新节点</text>
+    <text x="505" y="335" font-size="12" text-anchor="middle">插入到链表头部</text>
+    <text x="505" y="355" font-size="12" text-anchor="middle">返回0(已插入)</text>
+    
+    <!-- 连接线 -->
+    <line x1="300" y1="100" x2="300" y2="130" stroke="black" stroke-width="2" />
+    <line x1="300" y1="180" x2="300" y2="210" stroke="black" stroke-width="2" />
+    <line x1="300" y1="260" x2="300" y2="290" stroke="black" stroke-width="2" />
+    
+    <line x1="370" y1="330" x2="430" y2="330" stroke="black" stroke-width="2" />
+    <text x="400" y="320" font-size="12">否</text>
+    <line x1="580" y1="330" x2="580" y2="580" stroke="black" stroke-width="2" />
+    <line x1="580" y1="580" x2="60" y2="580" stroke="black" stroke-width="2" />
+    
+    <line x1="300" y1="370" x2="300" y2="400" stroke="black" stroke-width="2" />
+    <text x="310" y="385" font-size="12">是</text>
+    
+    <line x1="370" y1="440" x2="430" y2="440" stroke="black" stroke-width="2" />
+    <text x="400" y="430" font-size="12">是</text>
+    <line x1="550" y1="440" x2="580" y2="440" stroke="black" stroke-width="2" />
+    <line x1="580" y1="440" x2="580" y2="580" stroke="black" stroke-width="2" />
+    
+    <line x1="300" y1="480" x2="300" y2="510" stroke="black" stroke-width="2" />
+    <text x="310" y="495" font-size="12">否</text>
+    
+    <line x1="300" y1="560" x2="300" y2="580" stroke="black" stroke-width="2" />
+    <line x1="300" y1="580" x2="60" y2="580" stroke="black" stroke-width="2" />
+    <line x1="60" y1="580" x2="60" y2="330" stroke="black" stroke-width="2" />
+    <line x1="60" y1="330" x2="230" y2="330" stroke="black" stroke-width="2" />
+    
+    <rect x="25" y="290" width="50" height="40" rx="20" ry="20" fill="#f5cca6" stroke="black" />
+    <text x="50" y="315" font-size="14" text-anchor="middle">结束</text>
+</svg>
